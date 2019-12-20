@@ -35,13 +35,24 @@
             $('#m').val('');
             return false;
         });
+
         socket.on('cool', function(msg){
             $('#messages').append($('<li>').text(msg));
         });
 
         socket.on('hi', function(msg){
-            $('#messages').append($('<li>').text("bienvenue"));
+            $('#messages').append($('<li>').text("Quel est ton Prenom ?"));
+        })
+
+        socket.on('ssn', function(msg){
+            $('#messages').append($('<li>').text(msg));
         });
+
+
+        // envoi à tout le monde sauf à toi
+        /*socket.on('hi', function(msg){
+            $('#messages').append($('<li>').text("Nom ?"));
+        });*/
     });
 
 </script>
