@@ -1,6 +1,6 @@
 // ---- EXPRESS JS - Framework
 
-let SSN_MODULE = require('../mouhamad_faizan/ssn');
+let SSN_MODULE = require('./ssn');
 
 let express = require('express'),
     app = express();

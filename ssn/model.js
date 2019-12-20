@@ -1,4 +1,4 @@
-let SSN_MODULE = require('../mouhamad_faizan/ssn');
+let SSN_MODULE = require('./ssn');
 let pays_json = require('../_supports/pays');
 // --- Base de donnees
 let mongoose = require('mongoose');
