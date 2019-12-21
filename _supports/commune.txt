@@ -1,0 +1,2 @@
+Lorsque la personne vient de France
+Utiliser la l’API : https://api.gouv.fr/api/api-geo.html afin d’afficher le vrai nom du département de naissance et le vrai nom de la commune.

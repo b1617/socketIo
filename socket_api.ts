@@ -1,6 +1,7 @@
 import * as express from "express";
 import * as socketio from "socket.io";
 import * as path from "path";
+import { isBuffer } from "util";
 
 
 let ssn_module = require('./ssn/ssn.js');
@@ -22,6 +23,8 @@ app.get("/", (req: any, res: any) => {
 io.on('connection', function(socket){
 
     let ssn_test;
+    let user = {"person":{"prenom":"","nom":"","ssn":""}};
+    let count_question=0;
 
     console.log('a user connected');
 
@@ -33,8 +36,37 @@ io.on('connection', function(socket){
 
     socket.on('message', function(result) {
         socket.emit('cool', result);
-        //socket.emit('ssn', 'Coucou '+result);
-        socket.emit('ssn', result+", quel est ton nom ?");
+        if(count_question===0){
+            user.person.prenom=result;
+            socket.emit('ssn', user.person.prenom+", quel est votre nom ?");
+            count_question++;
+        }else if(count_question===1){
+            user.person.nom=result;
+            socket.emit('ssn', user.person.prenom+' '+user.person.nom+", quel est votre ssn ?");
+            count_question++;
+        }
+        else if(count_question===2){
+            ssn_test = new ssn_module(result);
+            if(!ssn_test.isValid()){
+                socket.emit('ssn', "Ce ssn est invalide veuillez saisir un ssn existant !");
+            }
+            else{
+                user.person.ssn=result;
+                socket.emit('ssn', user.person.prenom+' '+user.person.nom+', ceci est votre ssn : '+user.person.ssn);
+                socket.emit('ssn','Désirez-vous insérer vos données dans la base ? (Oui/Non)');
+                count_question++;
+            }
+        }
+        else if(count_question===3){
+            if(result==='Oui'){
+                //Utiliser le post de l'api que l'on a créé et lui passer les données de User.
+            }else if(result==='Non'){
+                //déconnecter le user (fermer la socket ?)
+            }else{
+                socket.emit('ssn','Veuillez répondre par Oui ou Non');
+            }
+
+        }
 });
 
 
