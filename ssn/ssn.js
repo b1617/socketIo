@@ -1,17 +1,12 @@
 "use strict";
-/**
- * Object Ssn
- */
-Object.defineProperty(exports, "__esModule", { value: true });
-var request = require("request");
-var Promise = require("bluebird");
-var fetch = require('node-fetch');
-var url = "https://geo.api.gouv.fr";
-var axios = require('axios');
+exports.__esModule = true;
 var Ssn = /** @class */ (function () {
     function Ssn(secu) {
         this.secu_number = secu;
     }
+    Ssn.prototype.getssn = function () {
+        return this.secu_number;
+    };
     // ------------------------------------------------------------------------------------------------------------
     // VALIDITY STUFF
     // ------------------------------------------------------------------------------------------------------------
@@ -81,16 +76,10 @@ var Ssn = /** @class */ (function () {
      */
     Ssn.prototype.extractBirthPlace = function () {
         var dept = +this.secu_number.substr(5, 2);
-        var commune_insee = dept + this.secu_number.substr(7, 3);
-        // --- Case DOM TOM
         if (dept == 97 || dept == 98) {
-            request(url + '/departements/' + dept, function (err, res, body) {
-                var json = JSON.parse(body);
-                console.log("json_nom" + json["nom"]);
-            });
             return {
                 dept: this.secu_number.substr(5, 3),
-                commune: this.secu_number.substr(8, 2),
+                commune: this.secu_number.substr(8, 2)
             };
         }
         else if (dept == 99) {
@@ -102,7 +91,7 @@ var Ssn = /** @class */ (function () {
         else {
             return {
                 dept: this.secu_number.substr(5, 2),
-                commune: commune_insee,
+                commune: this.secu_number.substr(7, 3)
             };
         }
     };
@@ -111,14 +100,6 @@ var Ssn = /** @class */ (function () {
      */
     Ssn.prototype.extractPosition = function () {
         return +this.secu_number.substr(10, 3);
-    };
-    Ssn.prototype.requestUrl = function (dept) {
-        return new Promise(function (resolve, reject) {
-            axios.get(url + '/departements/' + dept).then(function (response) {
-                console.log("response", response.data["nom"]);
-                resolve(response.data);
-            });
-        });
     };
     return Ssn;
 }());
