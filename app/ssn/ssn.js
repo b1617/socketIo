@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var Ssn = /** @class */ (function () {
     function Ssn(secu) {
         this.secu_number = secu;
@@ -79,7 +79,7 @@ var Ssn = /** @class */ (function () {
         if (dept == 97 || dept == 98) {
             return {
                 dept: this.secu_number.substr(5, 3),
-                commune: this.secu_number.substr(8, 2)
+                commune: this.secu_number.substr(8, 2),
             };
         }
         else if (dept == 99) {
@@ -91,7 +91,7 @@ var Ssn = /** @class */ (function () {
         else {
             return {
                 dept: this.secu_number.substr(5, 2),
-                commune: this.secu_number.substr(7, 3)
+                commune: this.secu_number.substr(7, 3),
             };
         }
     };

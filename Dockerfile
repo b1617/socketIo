@@ -10,14 +10,16 @@ RUN sudo apt-get install --yes nodejs
 RUN sudo apt-get install --yes build-essential
 
 # Bundle app source
-COPY . /socketIo
+ADD . /app/
+WORKDIR /app
 
 # Install app dependencies
-RUN cd /socketIo; npm install
+RUN npm install
 
 # Binds to port 3000
 EXPOSE  3000
+VOLUME /app/logs
 
 #  Defines your runtime(define default command)
 # These commands unlike RUN (they are carried out in the construction of the container) are run when the container
-CMD ["node", "/socketIo/server.js"]
+CMD npm run start

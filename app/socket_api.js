@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var express = require("express");
 var path = require("path");
 var Person = require("./ssn/model.js");
@@ -50,14 +50,13 @@ io.on('connection', function (socket) {
         else if (count_question === 3) {
             if (result.toLowerCase() === 'oui') {
                 //Utiliser le post de l'api que l'on a créé et lui passer les données de User.
-                //let p = new Person();
                 Person.createPerson(user).then(function (person) {
                     new Person(person).save().then(function (result) {
                         socket.emit('out', 'Vous êtes bien inscrit ' + result);
                     }, function (err) {
                         socket.emit('out', 'Inscription impossible ' + err);
                     });
-                })["catch"](function (err) {
+                }).catch(function (err) {
                     socket.emit('out', 'Inscription impossible ' + err);
                 });
             }
