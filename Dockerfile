@@ -9,16 +9,16 @@ RUN sudo apt-get install --yes nodejs
 RUN sudo apt-get install --yes build-essential
 
 # Ajout du fichier de dépendances package.json
-ADD app/package.json /app/
+# ADD package.json /app/
+
+# Ajout des sources
+ADD . /app/
 
 # Changement du repertoire courant
 WORKDIR /app
 
 # Installation des dépendances
 RUN npm install
-
-# Ajout des sources
-ADD . /app/
 
 # Binds to port 3000
 EXPOSE  3000
