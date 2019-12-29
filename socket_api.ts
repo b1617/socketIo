@@ -50,7 +50,7 @@ io.on('connection', function (socket) {
                 //Utiliser le post de l'api que l'on a créé et lui passer les données de User.
                 Person.createPerson(user).then((person) => {
                     new Person(person).save().then((result) => {
-                        socket.emit('out', 'Vous êtes bien inscrit ' + result);
+                        socket.emit('out', 'Vous êtes bien inscrit ' + result.toString());
                     }, (err) => {
                         socket.emit('out', 'Inscription impossible ' + err);
                     });
@@ -60,6 +60,7 @@ io.on('connection', function (socket) {
 
             } else if (result.toLocaleString() === 'non') {
                 //déconnecter le user (fermer la socket ?)
+                socket.close()
             } else {
                 socket.emit('out', 'Veuillez répondre par oui ou non');
             }
