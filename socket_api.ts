@@ -35,58 +35,70 @@ io.on('connection', function (socket) {
             user.lastName = result;
             socket.emit('out', user.firstName + ' ' + user.lastName + ", quel est votre ssn ?");
             count_question++;
-        } else if (count_question === 2) {
+        }  else if (count_question === 2) {
             let ssn_test = new ssnModule(result);
             if (!ssn_test.isValid()) {
                 socket.emit('out', "Ce ssn est invalide veuillez saisir un ssn existant !");
             } else {
                 user.SSN = result;
                 socket.emit('out', user.firstName + ' ' + user.lastName + ', ceci est votre ssn : ' + user.SSN);
-                socket.emit('out', 'Désirez-vous insérer vos données dans la base ? (oui/non)');
-                count_question++;
+                console.log("count", count_question);
+                Person.find({number_ssn:user.SSN}).then((result_ssn)=>{
+                if(result_ssn.length == 0){
+                        socket.emit('out', 'Vous êtes pas dans la base. Désirez-vous insérer vos données dans la base ? (oui/non)');
+                        count_question++;
+                }else{
+                    socket.emit('out', 'êtes-vous bien : '+result_ssn);
+                    count_question=4;
+                }
+                console.log("SSN" + result)},
+                (err)=>{
+                }
+            );
+              //  count_question++;
+
             }
+
         } else if (count_question === 3) {
-            if (result.toLowerCase() === 'oui') {
-                //Utiliser le post de l'api que l'on a créé et lui passer les données de User.
-                Person.createPerson(user).then((person) => {
-                    new Person(person).save().then((result) => {
-                        socket.emit('out', 'Vous êtes bien inscrit ' + result.toString());
-                    }, (err) => {
-                        socket.emit('out', 'Inscription impossible ' + err);
-                    });
-                }).catch((err) => {
-                    socket.emit('out', 'Inscription impossible ' + err);
-                });
+                if (result.toLowerCase() === 'oui') {
+                                //Utiliser le post de l'api que l'on a créé et lui passer les données de User.
+                                Person.createPerson(user).then((person) => {
+                                    new Person(person).save().then((result) => {
+                                        socket.emit('out', 'Vous êtes bien inscrit ' + result.toString());
+                                        socket.emit('out', 'Bye ' + user.firstName);
+                                        count_question++;
+                                        //socket.disconnect();
+                                    }, (err) => {
+                                        socket.emit('out', 'Inscription impossible ' + err);
+                                    });
+                                }).catch((err) => {
+                                    socket.emit('out', 'Inscription impossible ' + err);
+                                });
 
-            } else if (result.toLocaleString() === 'non') {
-                //déconnecter le user (fermer la socket ?)
-                socket.close()
-            } else {
-                socket.emit('out', 'Veuillez répondre par oui ou non');
+                            } else if (result.toLowerCase() === 'non') {
+                                //déconnecter le user (fermer la socket ?)
+                                //socket.disconnect()
+                            } else {
+                                socket.emit('out', 'Veuillez répondre par oui ou non');
+                            }
+        }
+
+
+        else if(count_question === 4){
+            if (result.toLowerCase() === 'oui') {
+                                    socket.emit('out', 'Ok tant mieux !');
+                                    count_question++;
+            } else if (result.toLowerCase() === 'non') {
+                                    socket.emit('out', 'Veuillez contacter M.Breda');
+                                    count_question++;
+            }else{
+                                socket.emit('out', 'Veuillez répondre par oui ou non');
             }
 
         }
+
+
     });
-
-
-    /*socket.on('message', function(message){
-        let msg = ['Prenom ?', 'SSN ?'];
-
-        ssn_test  = new ssn_module(message);
-        socket.person = {
-            nom: "s",
-            prenom: "s",
-            ssn: ""
-        }
-
-
-        console.log(message);
-        socket.emit('ssn', message);
-        //socket.emit('cool', message + "socket");
-        socket.emit('ssn', ssn_test.isValid());
-    });*/
-
-
 });
 
 const server = http.listen(3000, function () {
