@@ -4,7 +4,7 @@ let request = require('request');
 let paysJson = require('../_supports/pays');
 let mongoose = require('mongoose');
 let ssnHelper = require('./ssn');
-let database = mongoose.connect("mongodb://localhost/td3", {
+let database = mongoose.connect("mongodb://127.0.0.1/td3", {
     promiseLibrary: require('bluebird'),
     useNewUrlParser: true
 });
@@ -18,6 +18,7 @@ let personSchema = new Schema({
     id: String,
     lastName: String,
     firstName: String,
+    number_ssn : String,
     SSN: {
         departement: String,
         pays: String,
@@ -61,7 +62,7 @@ personSchema.statics.createPerson = function (data) {
             resolve(res);
         }));
     }).then((res) => {
-        //  console.log('last', res);
+        //console.log('last', res);
         let dept, ssnInfo, data, commune;
         if (res.length > 2) {
             dept = res[0];
@@ -75,6 +76,7 @@ personSchema.statics.createPerson = function (data) {
         return {
             lastName: data['lastName'],
             firstName: data['firstName'],
+            number_ssn: data['SSN'],
             SSN: {
                 departement: ssnInfo['birthPlace']['dept'] !== 'Etranger' ? dept['nom'] : null,
                 pays: ssnInfo['birthPlace']['dept'] !== 'Etranger' ? 'France' : paysJson[ssnInfo['birthPlace']['pays']],
