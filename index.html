@@ -38,6 +38,7 @@
         #messages {
             list-style-type: none;
             margin: 0;
+            margin-bottom: 200px;
             padding: 0;
         }
 
@@ -48,6 +49,7 @@
         #messages li:nth-child(odd) {
             background: #eee;
         }
+
     </style>
 </head>
 <body>
@@ -76,6 +78,16 @@
         socket.on('out', function (msg) {
             $('#messages').append($('<li>').text(msg));
         });
+        var pseudo = prompt("Entrez votre pseudo :", "");
+        if (pseudo) {
+            var save = false;
+            if (confirm('Are you sure you want to save this thing into the database?')) {
+                save = true;
+            }
+            socket.emit('in', {'pseudo': pseudo, 'save': save});
+        }
+    });
+    $(function () {
 
         // envoi à tout le monde sauf à toi
         /*socket.on('hi', function(msg){
