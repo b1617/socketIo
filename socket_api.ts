@@ -66,7 +66,7 @@ io.on('connection', function (socket) {
                 model = res.length == 0 ? null : res[0];
                 if (res.length > 0) {
                     for (let i = 0; i < res[0].historic.length; ++i) {
-                        socket.emit('out', res[0].historic[i]);
+                        socket.emit('out', res[0].historic[i], i);
                         msgs.push(res[0].historic[i]);
                     }
                 }
@@ -173,7 +173,6 @@ io.on('connection', function (socket) {
         }
     });
 });
-
 
 const server = http.listen(3000, function () {
     console.log("listening on *:3000");

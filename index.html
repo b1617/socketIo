@@ -71,8 +71,20 @@
             $('#m').val('');
             return false;
         });
-        socket.on('out', function (msg) {
-            $('#messages').append($('<li>').text(msg));
+        socket.on('out', function (msg, historic) {
+
+            if(historic !== undefined){
+                $('#messages').append($('<li id='+historic+'></li>').text(msg)).append($('<button id=button_'+ historic +'></button>').text("delete"));
+                document.getElementById("button_"+historic).onclick = function() {
+                    console.log("enlever la ligne" + historic);
+                    document.getElementById(historic).remove();
+                    document.getElementById("button_"+historic).remove();
+                }
+            }
+            else{
+                $('#messages').append($('<li>').text(msg));
+            }
+
         });
         var pseudo = prompt("Entrez votre pseudo :", "");
         if (pseudo) {
