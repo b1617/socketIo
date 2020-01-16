@@ -4,7 +4,7 @@ let request = require('request');
 let paysJson = require('../_supports/pays');
 let mongoose = require('mongoose');
 let ssnHelper = require('./ssn');
-let database = mongoose.connect("mongodb://127.0.0.1/td3", {
+let database = mongoose.connect("mongodb://mongo:27017/chatbot", {
     promiseLibrary: require('bluebird'),
     useNewUrlParser: true
 });
