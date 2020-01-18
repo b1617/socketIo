@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
 <head>
+
     <title>Socket.IO chat</title>
     <style>
         * {
@@ -59,10 +60,9 @@
     <button>Send</button>
 </form>
 </body>
-
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-<script>
+<script >
     $(function () {
         var socket = io();
         $('form').submit(function (e) {
@@ -71,14 +71,18 @@
             $('#m').val('');
             return false;
         });
-        socket.on('out', function (msg, historic) {
+        socket.on('out', function (msg, historic, pseudo, msgs) {
 
             if(historic !== undefined){
                 $('#messages').append($('<li id='+historic+'></li>').text(msg)).append($('<button id=button_'+ historic +'></button>').text("delete"));
                 document.getElementById("button_"+historic).onclick = function() {
-                    console.log("enlever la ligne" + historic);
-                    document.getElementById(historic).remove();
-                    document.getElementById("button_"+historic).remove();
+                    if(pseudo !== undefined && msgs !== undefined){
+                        //console.log("enlever la ligne" + historic);
+                        document.getElementById(historic).remove();
+                        document.getElementById("button_"+historic).remove();
+                        msgs.splice(historic, 1);
+                        console.log("msgs", msgs);
+                    }
                 }
             }
             else{

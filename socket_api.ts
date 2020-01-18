@@ -30,11 +30,11 @@ let model = null;
 io.on('connection', function (socket) {
     let user = {"firstName": null, "lastName": null, "SSN": null};
     let count_question = -1;
-    console.log('a user connected');
+    //console.log('a user connected');
     msgs = [];
     socket.on('disconnect', function () {
-        console.log('user disconnected');
-        console.log('msgs', msgs);
+        //console.log('user disconnected');
+        ////console.log('msgs', msgs);
         if (save) {
             if (model) {
                 Historic.deleteOne({_id: model['_id']}).then((res) => {
@@ -43,7 +43,7 @@ io.on('connection', function (socket) {
                         'historic': msgs
                     }).save();
                 }, (err) => {
-                    console.log('err');
+                    //console.log('err');
                 });
             } else {
                 Historic({
@@ -54,6 +54,7 @@ io.on('connection', function (socket) {
         }
     });
     socket.on('in', function (result) {
+
         if (count_question !== -1) {
             msgs.push(result);
             socket.emit('out', result);
@@ -65,8 +66,9 @@ io.on('connection', function (socket) {
             Historic.find({pseudo: pseudo}).then((res) => {
                 model = res.length == 0 ? null : res[0];
                 if (res.length > 0) {
+                    //console.log("res", res);
                     for (let i = 0; i < res[0].historic.length; ++i) {
-                        socket.emit('out', res[0].historic[i], i);
+                        socket.emit('out', res[0].historic[i], i, pseudo, res[0].historic);
                         msgs.push(res[0].historic[i]);
                     }
                 }
@@ -95,9 +97,9 @@ io.on('connection', function (socket) {
                 user.SSN = result;
                 socket.emit('out', user.firstName + ' ' + user.lastName + ', ceci est le ssn de la personne : ' + user.SSN);
                 msgs.push(user.firstName + ' ' + user.lastName + ', ceci est le ssn de la personne : ' + user.SSN);
-                console.log("count", count_question);
+                ////console.log("count", count_question);
                 Person.find({number_ssn: user.SSN}).then((result_ssn) => {
-                        console.log(result_ssn);
+                        //console.log(result_ssn);
                         if (result_ssn.length == 0) {
                             socket.emit('out', 'Cette personne n\'est pas dans la base. Désirez-vous insérer ses données dans la base ? (oui/non)');
                             msgs.push('Cette personne n\'est pas dans la base. Désirez-vous insérer ses données dans la base ? (oui/non)');
@@ -107,7 +109,7 @@ io.on('connection', function (socket) {
                             msgs.push('Est-ce bien la bonne personne : ' + result_ssn);
                             count_question = 4;
                         }
-                        console.log("SSN" + result)
+                        //console.log("SSN" + result)
                     },
                     (err) => {
                     }
