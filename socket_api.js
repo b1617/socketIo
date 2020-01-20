@@ -26,14 +26,22 @@ var save = false;
 var pseudo = null;
 var msgs = null;
 var model = null;
+var remove_line = null;
+var msgs_initial_length = null;
 io.on('connection', function (socket) {
     var user = { "firstName": null, "lastName": null, "SSN": null };
     var count_question = -1;
-    //console.log('a user connected');
+    console.log('a user connected');
     msgs = [];
+    remove_line = [];
     socket.on('disconnect', function () {
-        //console.log('user disconnected');
-        ////console.log('msgs', msgs);
+        msgs_initial_length = msgs.length - 1;
+        console.log('remove_line', remove_line);
+        console.log('user disconnected');
+        for (var i = 0; i < remove_line.length; ++i) {
+            msgs.splice(remove_line[i] - i, 1);
+        }
+        console.log('msgs', msgs);
         if (save) {
             if (model) {
                 Historic.deleteOne({ _id: model['_id'] }).then(function (res) {
@@ -54,6 +62,12 @@ io.on('connection', function (socket) {
         }
     });
     socket.on('in', function (result) {
+        socket.on('remove_line', function (result_line) {
+            if (result_line['name'] === "historic_remove_line") {
+                console.log("remove_line", result_line['line']);
+                remove_line.push(result_line['line']);
+            }
+        });
         if (count_question !== -1) {
             msgs.push(result);
             socket.emit('out', result);
@@ -67,7 +81,7 @@ io.on('connection', function (socket) {
                 if (res.length > 0) {
                     //console.log("res", res);
                     for (var i = 0; i < res[0].historic.length; ++i) {
-                        socket.emit('out', res[0].historic[i], i, pseudo, res[0].historic);
+                        socket.emit('out', res[0].historic[i], i);
                         msgs.push(res[0].historic[i]);
                     }
                 }

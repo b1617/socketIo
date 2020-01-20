@@ -71,18 +71,17 @@
             $('#m').val('');
             return false;
         });
-        socket.on('out', function (msg, historic, pseudo, msgs) {
+        socket.on('out', function (msg, historic) {
 
             if(historic !== undefined){
                 $('#messages').append($('<li id='+historic+'></li>').text(msg)).append($('<button id=button_'+ historic +'></button>').text("delete"));
                 document.getElementById("button_"+historic).onclick = function() {
-                    if(pseudo !== undefined && msgs !== undefined){
-                        //console.log("enlever la ligne" + historic);
-                        document.getElementById(historic).remove();
-                        document.getElementById("button_"+historic).remove();
-                        msgs.splice(historic, 1);
-                        console.log("msgs", msgs);
-                    }
+                    //console.log("enlever la ligne" + historic);
+                    document.getElementById(historic).remove();
+                    document.getElementById("button_"+historic).remove();
+                    socket.emit('remove_line', {'name': "historic_remove_line", 'line': historic});
+
+
                 }
             }
             else{
