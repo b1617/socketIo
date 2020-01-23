@@ -1,24 +1,14 @@
-// --- Base de donnees
-
+let URL = "https://geo.api.gouv.fr";
 let request = require('request');
 let paysJson = require('../_supports/pays');
 let mongoose = require('mongoose');
 let ssnHelper = require('./ssn');
-let database = mongoose.connect("mongodb://mongo:27017/chatbot", {
-    promiseLibrary: require('bluebird'),
-    useNewUrlParser: true
-});
-let URL = "https://geo.api.gouv.fr";
-// ---- Creation du schema
-//--- Module dependencies
 const Schema = mongoose.Schema;
-
-//-- Resources Schema
 let personSchema = new Schema({
     id: String,
     lastName: String,
     firstName: String,
-    number_ssn : String,
+    number_ssn: String,
     SSN: {
         departement: String,
         pays: String,
@@ -87,4 +77,5 @@ personSchema.statics.createPerson = function (data) {
 };
 
 module.exports = mongoose.model('Person', personSchema);
-//module.exports = personSchema;
+
+

@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
 <head>
+
     <title>Socket.IO chat</title>
     <style>
         * {
@@ -38,6 +39,7 @@
         #messages {
             list-style-type: none;
             margin: 0;
+            margin-bottom: 200px;
             padding: 0;
         }
 
@@ -48,6 +50,7 @@
         #messages li:nth-child(odd) {
             background: #eee;
         }
+
     </style>
 </head>
 <body>
@@ -57,14 +60,9 @@
     <button>Send</button>
 </form>
 </body>
-
 <script src="/socket.io/socket.io.js"></script>
-<script>
-    //var socket = io();
-</script>
-
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-<script>
+<script >
     $(function () {
         var socket = io();
         $('form').submit(function (e) {
@@ -73,9 +71,34 @@
             $('#m').val('');
             return false;
         });
-        socket.on('out', function (msg) {
-            $('#messages').append($('<li>').text(msg));
+        socket.on('out', function (msg, historic) {
+
+            if(historic !== undefined){
+                $('#messages').append($('<li id='+historic+'></li>').text(msg)).append($('<button id=button_'+ historic +'></button>').text("delete"));
+                document.getElementById("button_"+historic).onclick = function() {
+                    //console.log("enlever la ligne" + historic);
+                    document.getElementById(historic).remove();
+                    document.getElementById("button_"+historic).remove();
+                    socket.emit('remove_line', {'name': "historic_remove_line", 'line': historic});
+
+
+                }
+            }
+            else{
+                $('#messages').append($('<li>').text(msg));
+            }
+
         });
+        var pseudo = prompt("Entrez votre pseudo :", "");
+        if (pseudo) {
+            var save = false;
+            if (confirm('Are you sure you want to save this thing into the database?')) {
+                save = true;
+            }
+            socket.emit('in', {'pseudo': pseudo, 'save': save});
+        }
+    });
+    $(function () {
 
         // envoi à tout le monde sauf à toi
         /*socket.on('hi', function(msg){
