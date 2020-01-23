@@ -13,7 +13,7 @@ var http = require("http").Server(app);
 // http server.
 var io = require("socket.io")(http);
 // connection mongo
-mongoose.connect("mongodb://localhost/td3", {
+mongoose.connect("mongodb://mongo:27017/td3", {
     promiseLibrary: require('bluebird'),
     useNewUrlParser: true
 });
